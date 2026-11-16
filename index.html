@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPC 社区周报系统</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1 id="page-title" onclick="titleTap()" style="cursor:default" title="">OPC 社区周报系统</h1>
+      <div class="sub">27 家学生团队 · 每周一收计划 / 每周四收进度 · 交互原型（数据保存在本机浏览器）<span style="color:#2563eb"> · v1.2（2026-11-13 更新）</span></div>
+    </div>
+    <div class="role-switch">
+      <button id="tab-team" class="active" onclick="switchRole('team')">团队端</button>
+      <button id="tab-exit" class="hidden" onclick="switchRole('team')">退出管理</button>
+    </div>
+  </div>
+
+  <div id="storage-tip" style="display:none;background:#fef4e6;border:1px solid #f0d9ae;color:#8a5a00;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;line-height:1.7">
+    <b>提示：当前浏览器禁止了本地存储，本周提交内容无法保存。</b><br>
+    解决办法（三选一）：① 用手机自带浏览器 / Chrome / Edge 打开；② 微信内打开时，点右上角「···」→「在浏览器打开」；③ 退出无痕/隐私模式。
+  </div>
+
+  <!-- ================= 团队端 ================= -->
+  <div id="view-team">
+    <div class="banner">
+      <div>
+        <div class="week" id="week-label">—</div>
+        <div class="task" id="task-label">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="count"><span id="team-sub-count">0</span><small> / 2 项已提交</small></div>
+        <div style="font-size:12px;opacity:.85" id="deadline-label">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h2>第一步 · 选择我的团队</h2>
+      <div class="desc">原型演示用：从 27 家在营团队中点选一个身份（已移除宋蓓娜老师、贾东旭老师指导的退出团队），提交记录会与该团队绑定。</div>
+      <div class="team-chips" id="team-chips"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>📌 每周计划表（周一提交）</h2>
+        <div class="desc">本周打算做什么、做到什么程度、需要社区提供什么支持。</div>
+        <label>本周核心任务（1–3 条，每条一行）</label>
+        <textarea id="plan-tasks" placeholder="例如：&#10;1. 完成 5 家意向客户上门拜访&#10;2. 上架 2 款秋季新品"></textarea>
+        <label>预期成果 / 可量化目标</label>
+        <input type="text" id="plan-goal" placeholder="例如：成交 3 单，营业额 2000 元">
+        <label>需要社区/学校的支持（选填）</label>
+        <input type="text" id="plan-need" placeholder="例如：申请周三使用共享直播间 2 小时">
+        <div style="margin-top:16px"><button class="btn btn-primary" onclick="submitForm('plan')">提交本周计划</button></div>
+        <div class="hint" id="plan-status"></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 每周进度表（周四提交）</h2>
+        <div class="desc">对照周一计划逐项说明完成情况，未完成需写明原因与补救安排。</div>
+        <label>任务 1 完成度（%）</label>
+        <input type="number" id="prog-p1" min="0" max="100" placeholder="0–100">
+        <label>任务 2 完成度（%）</label>
+        <input type="number" id="prog-p2" min="0" max="100" placeholder="0–100">
+        <label>实际成果与亮点</label>
+        <textarea id="prog-result" placeholder="例如：已成交 2 单，新增会员 15 人"></textarea>
+        <label>未完成事项的原因与下周补救安排（选填）</label>
+        <textarea id="prog-delay" placeholder="例如：客户拜访因考试周推迟，下周二前补齐"></textarea>
+        <div style="margin-top:16px"><button class="btn btn-green" onclick="submitForm('progress')">提交进度安排</button></div>
+        <div class="hint" id="prog-status"></div>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="dot"></span>我的历史提交</div>
+    <div class="card" id="my-history"></div>
+  </div>
+
+  <!-- ================= 管理端 ================= -->
+  <div id="view-admin" class="hidden">
+    <div class="stat-row">
+      <div class="stat"><div class="k" id="stat-1-k">本周计划已交</div><div class="v"><span id="stat-plan">0</span><small> /27</small></div><div class="bar"><i id="bar-plan" style="width:0%"></i></div></div>
+      <div class="stat"><div class="k" id="stat-2-k">本周进度已交</div><div class="v"><span id="stat-prog">0</span><small> /27</small></div><div class="bar"><i id="bar-prog" style="width:0%;background:var(--green)"></i></div></div>
+      <div class="stat"><div class="k">平均完成度</div><div class="v"><span id="stat-avg">—</span><small> %</small></div><div class="bar"><i id="bar-avg" style="width:0%;background:var(--amber)"></i></div></div>
+      <div class="stat"><div class="k">逾期未交团队</div><div class="v" style="color:var(--red)"><span id="stat-late">0</span><small> 家</small></div><div class="bar"><i id="bar-late" style="width:0%;background:var(--red)"></i></div></div>
+    </div>
+
+
+    <div class="toolbar">
+      <button class="btn btn-outline btn-sm" onclick="simulateWeek('plan')">模拟：周一已截止</button>
+      <button class="btn btn-outline btn-sm" onclick="simulateWeek('progress')">模拟：周四已截止</button>
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">导出本周汇总 CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="remindLate()">一键催办逾期团队</button>
+    </div>
+
+    <div class="card">
+      <h2>27 家团队提交看板 <span style="font-size:12px;font-weight:400;color:var(--ink3)" id="board-week"></span></h2>
+      <div class="desc">点击任意团队可查看详细内容；红 = 未交，黄 = 截止后补交，绿 = 按时提交。</div>
+      <div class="scroll-x">
+        <table>
+          <thead><tr><th style="width:170px">团队</th><th>本周计划</th><th>进度汇报</th><th style="width:110px">平均完成度</th><th style="width:120px">操作</th></tr></thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    OPC 社区周报系统 · 交互原型 v0.1 · 表单字段与统计口径可在正式开发前调整<br>
+    正式版建议：微信小程序（订阅消息提醒）或企业微信机器人（群内自动收表+催办）
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="modal-root"></div>
+
+<script src="js/teams.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
