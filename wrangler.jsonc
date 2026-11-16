@@ -1,0 +1,18 @@
+
+{
+  "name": "my-website1116",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-13",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "opc-weekly-report-db",
+      "database_id": "db2fa1cf-ebd9-4ed0-98bc-5a99073bdc22"
+    }
+  ]
+}
