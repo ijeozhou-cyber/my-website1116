@@ -164,6 +164,15 @@ async function route(req, env) {
       return response({ status: "error", database: "unavailable" }, 503);
     }
   }
+  
+if (path === "/api/config-check" && req.method === "GET") {
+  return response({
+    DB: Boolean(env.DB),
+    ADMIN_PASSWORD: Boolean(env.ADMIN_PASSWORD),
+    SESSION_SECRET: Boolean(env.SESSION_SECRET)
+  });
+}
+  
   if (!env.DB || !env.ADMIN_PASSWORD || !env.SESSION_SECRET)
     return response({ error: "服务器配置不完整" }, 503);
   if (!["GET", "POST"].includes(req.method))
